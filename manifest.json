@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "dictionaries": {
+    "pt-BR": {
+      "format": 1,
+      "revision": 1,
+      "publishedAt": "2026-11-01T13:47:38Z",
+      "entries": 37667,
+      "url": "https://github.com/ivanpessanha/mi3-pronunciation-dictionary/releases/download/pt-BR-r1/lexicon-pt-BR-r1.tsv.gz",
+      "size": 164206,
+      "sha256": "fa01c416fe49ec9ba9c7e25fdbf5e9e59f0398851af7ae890575fc5be6873196",
+      "sourceSha256": "1c67e09457ac5c979b48137b00514df431f6c2f3580eb502fd82ce0b48c229d1"
+    }
+  }
+}
