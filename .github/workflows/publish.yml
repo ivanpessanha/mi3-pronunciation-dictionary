@@ -1,0 +1,45 @@
+name: Publish dictionary
+
+# Run by hand or through the API: each run reaches every user of the app.
+on:
+  workflow_dispatch:
+    inputs:
+      locale:
+        description: Dictionary to publish
+        required: true
+        default: pt-BR
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      LOCALE: ${{ inputs.locale }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m unittest discover -s tests -v
+      - id: build
+        run: python tools/dictionary.py build --locale "$LOCALE" --out dist --repository "$GITHUB_REPOSITORY" | tee -a "$GITHUB_OUTPUT"
+      # The manifest is committed only after the file it points to exists.
+      - if: steps.build.outputs.changed == 'true'
+        env:
+          TAG: ${{ steps.build.outputs.tag }}
+          FILE: ${{ steps.build.outputs.file }}
+          ENTRIES: ${{ steps.build.outputs.entries }}
+        run: |
+          gh release create "$TAG" "$FILE" --title "$TAG" --notes "$ENTRIES entradas."
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add manifest.json
+          git commit -m "publish: $TAG"
+          git push
